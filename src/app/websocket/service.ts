@@ -1,48 +1,53 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { KafkaService } from '../kafka/consumer';
+import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import { NewsConsumer } from '../kafka/consumer';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class WebsocketService {
   private io: Server;
   private readonly logger = new Logger(WebsocketService.name);
+  private newsFeedSubject = new Subject<string>();
 
-  constructor(private readonly newsConsumer: NewsConsumer) {}
+  constructor(private readonly newsConsumer: KafkaService) {}
 
-  initialize(server: any) {
-    try {
-      this.io = new Server(server, {
-        cors: {
-          origin: '*',
-          methods: ['GET', 'POST'],
-        },
+  initialize(server: HttpServer) {
+    this.io = new Server(server, {
+      cors: {
+        origin: '*',
+      },
+    });
+
+    this.io.on('connection', (socket: Socket) => {
+      this.logger.log('Client connected to WebSocket server');
+
+      socket.on('disconnect', () => {
+        this.logger.log('Client disconnected from WebSocket server');
       });
 
-      this.newsConsumer.listen((message) => {
-        this.io.emit('news', message);
+      socket.on('message', (message: string) => {
+        console.log(`Received message from client: ${message}`);
+        socket.emit('message', `Echo: ${message}`);
       });
+    });
 
-      this.io.on('connection', (socket: Socket) => {
-        this.logger.log('Client connected to WebSocket server');
+    this.newsConsumer.listen((message) => {
+      this.io.emit('news-topic', message);
+    });
 
-        socket.on('disconnect', () => {
-          this.logger.log('Client disconnected from WebSocket server');
-        });
-      });
-    } catch (error) {
-      this.logger.error('Error initializing WebSocket server:', error.stack);
-      throw new Error('Error initializing WebSocket server');
-    }
+    server.listen(3001, () => {
+      console.log('WebSocket server listening on port 3001');
+    });
   }
 
-  initializeNewsFeed() {
-    try {
-      this.newsConsumer.listen((message) => {
-        this.io.emit('news', message);
-      });
-    } catch (error) {
-      this.logger.error('Error initializing news feed:', error.stack);
-      throw new Error('Error initializing news feed');
-    }
+  broadcastMessage(message: string): void {
+    this.newsFeedSubject.next(message);
+    this.io.emit('news-topic', message);
+    this.logger.log(`Message "${message}" sent to client.`);
+  }
+
+  get newsFeedObservable(): Observable<string> {
+    return this.newsFeedSubject.asObservable();
   }
 }

@@ -2,12 +2,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app/controllers/app.controller';
 import { AppService } from './app/services/app.service';
-import { NewsProducer } from './app/kafka/producer';
-import { NewsConsumer } from './app/kafka/consumer';
-import { WebsocketGateway } from './app/websocket/gateway';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { WebsocketService } from './app/websocket/service';
+import { KafkaService } from './app/kafka/consumer';
+import { KafkaProducerService } from './app/kafka/producer';
+import { WebsocketModule } from './app/websocket/gateway';
 
 @Module({
   imports: [
@@ -19,10 +19,10 @@ import { WebsocketService } from './app/websocket/service';
   controllers: [AppController],
   providers: [
     AppService,
-    NewsProducer,
-    NewsConsumer,
-    WebsocketGateway,
+    KafkaService,
+    KafkaProducerService,
     WebsocketService,
+    WebsocketModule,
   ],
 })
 export class AppModule {}
