@@ -1,3 +1,33 @@
+Alintra Backend
+
+# Rodando Backend Alintra
+
+- Certifique-se de ter Docker e Docker Compose instalados em sua máquina.
+
+### Passo 1: Rodar o Docker Compose
+
+- Para executar os serviços necessários para os testes, execute o seguinte comando na raiz do projeto:
+
+- Subir os containers:
+
+- Este comando inicia os contêineres Docker necessários para o backend Alintra.
+
+### docker-compose up -d
+
+- Rebuild:
+
+### docker-compose up -d --build
+
+### Passo 5: Rodar o cliente de socket WebSocket
+
+- Para rodar o cliente de socket WebSocket, execute o seguinte comando na raiz do projeto:
+
+### node websocket-client.ts
+
+- Para rodar a api local
+
+### npm start
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
