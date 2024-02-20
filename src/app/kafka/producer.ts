@@ -12,7 +12,7 @@ export class KafkaProducerService implements OnModuleInit {
 
   constructor() {
     this.kafka = new Kafka({
-      brokers: ['127.0.0.1:9092' || 'kafka:9092'],
+      brokers: ['localhost:9092'],
     });
 
     this.producer = this.kafka.producer({

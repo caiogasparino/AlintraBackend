@@ -5,6 +5,7 @@ import { createServer } from 'http';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   const expressServer = app.getHttpServer();
   const httpServer = createServer(expressServer);
   const websocketService = app.get(WebsocketService);

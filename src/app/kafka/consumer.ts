@@ -8,7 +8,7 @@ export class KafkaService implements OnModuleInit {
 
   constructor() {
     this.consumer = new Kafka({
-      brokers: ['127.0.0.1:9092' || 'kafka:9092'],
+      brokers: ['localhost:9092'],
     }).consumer({
       groupId: 'kafka',
     });

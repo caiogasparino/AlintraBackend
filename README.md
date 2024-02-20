@@ -12,7 +12,7 @@ Alintra Backend
 
 - Este comando inicia os contêineres Docker necessários para o backend Alintra.
 
-### docker-compose up -d
+### npm start || docker-compose up -d && npx nest start
 
 - Rebuild:
 
